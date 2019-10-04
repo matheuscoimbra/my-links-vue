@@ -27,7 +27,7 @@
                   dark
                   flat
                 >
-                  <v-toolbar-title >Login <v-icon>mdi-dog</v-icon></v-toolbar-title>
+                  <v-toolbar-title >My Links <v-icon>mdi-dog</v-icon></v-toolbar-title>
                   <div class="flex-grow-1"></div>
 
                 </v-toolbar>
@@ -65,6 +65,7 @@
 </template>
 
 <script>
+  import {   userKey } from '@/global'
     import { getData, setData } from 'nuxt-storage/local-storage';
     export default {
 
@@ -87,9 +88,9 @@
                     this.snackbar = true
                     this.user.email = this.email
                     this.user.senha = this.senha
-                    //this.$store.commit('addUser', user)
-                    // setData(userKey, JSON.stringify(res.data))
-                    //this.$router.push({ path: '/' })
+                    this.$store.commit('addUser', this.user)
+                    setData(userKey, JSON.stringify(this.user))
+                    this.$router.push({ path: '/' })
                 }
 
 

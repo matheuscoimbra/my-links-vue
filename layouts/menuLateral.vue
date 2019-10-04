@@ -1,6 +1,7 @@
 <template>
   <div>
   <v-navigation-drawer
+    id="top"
     v-model="drawer"
     :mini-variant="miniVariant"
     :clipped="isMenuVisible"
@@ -80,5 +81,7 @@
 </script>
 
 <style scoped>
-
+    #top{
+      top: 0px !important;
+    }
 </style>
