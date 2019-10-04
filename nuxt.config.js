@@ -18,6 +18,14 @@ export default {
     ]
   },
   /*
+  ** Router config
+  */
+  router: {
+    middleware: [
+      'before-each'
+    ]
+  },
+  /*
   ** Customize the progress-bar color
   */
   loading: { color: '#fff' },
@@ -26,10 +34,14 @@ export default {
   */
   css: [
   ],
+
+
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
+    { src: '~/plugins/nuxt-storage.js', mode: 'client' }
+
   ],
   /*
   ** Nuxt.js dev-modules
@@ -83,3 +95,4 @@ export default {
     }
   }
 }
+
