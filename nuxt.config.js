@@ -40,7 +40,8 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    { src: '~/plugins/nuxt-storage.js', mode: 'client' }
+    { src: '~/plugins/nuxt-storage.js', mode: 'client' },
+    '~/plugins/firebase.js'
 
   ],
   /*
