@@ -16,11 +16,13 @@ export default async ({
   let maybeAuthenticated = await  store.getters.usuarioget
   console.log("maybe",maybeAuthenticated);
   const currentPath = route.path
+  console.log("PAGE", currentPath)
   const isNotLogin = getData(userKey)
   console.log("login", isNotLogin);
 
-  if (isNotLogin &&  maybeAuthenticated === null ) {
+  if (isNotLogin===null && currentPath!=='/auth/login' &&  maybeAuthenticated === null ) {
     console.log("ent")
+    setData(userKey, setData(userKey, JSON.stringify("user")))
      redirect('/auth/login', { page: route.fullPath })
 
   }
