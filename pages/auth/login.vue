@@ -77,6 +77,15 @@
                   <v-tab>REGISTRAR</v-tab>
                   <v-tab-item>
                     <v-card-text>
+
+                      <v-text-field
+                        label="Nome Completo"
+                        v-model="nome"
+                        prepend-icon="mdi-account-badge"
+                        :rules="[v => !!v || 'Informe seu nome ']"
+                        required
+                      ></v-text-field>
+
                       <v-text-field
                         label="Email"
                         v-model="email"
@@ -127,6 +136,7 @@
             error:'',
             email:'',
             senha:'',
+            nome:'',
             name: "login",
             user: {},
             valid: true,
@@ -146,9 +156,10 @@
                     console.log(this.user)
                     this.user = new firebase.auth.GoogleAuthProvider()
                     firebase.auth().signInWithEmailAndPassword(this.email, this.senha)
-                        .then(()  => {
+                        .then((user)  => {
                         // store the user ore wathever
-                        this.$store.commit('addUser', this.user)
+                            console.log("login1",user)
+                        this.$store.commit('addUser', user)
                         setData(userKey, JSON.stringify(this.user))
                             this.error= "login realizado com sucesso!"
                         this.$router.push('/')
@@ -168,10 +179,24 @@
                 this.snackbar = true
                 firebase.auth().createUserWithEmailAndPassword(this.email, this.senha)
                     .then((created) => {
-                        created.user.sendEmailVerification().then(() => {
-                            this.$router.push('/login/auth');
+                        created.user.sendEmailVerification().then((user) => {
+                            firebase.firestore().collection("user").doc(created.user.uid).set({
+                                name: this.nome,
+                                email: this.email,
+                            }).then(()=>{
+                                console.log("cadastrando",created)
+                                this.$store.commit('addUser', created)
+                                setData(userKey, JSON.stringify(created))
+                                this.error= "cadastro realizado com sucesso!"
+                                this.$router.push('/')
+                            }).catch((err) => {
+                                console.log("erro cadastro fb")
+                                this.error=err.message
+                                this.snackbar = true
+                            })
                         });
                     }).catch((error) => {
+                    console.log("erro cadastro")
                     this.error=error.message
                     this.snackbar = true
                 });

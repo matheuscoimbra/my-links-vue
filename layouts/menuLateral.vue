@@ -24,6 +24,11 @@
         </v-list-item-content>
       </v-list-item>
     </v-list>
+    <template v-slot:append>
+      <div class="pa-2">
+        <v-btn @click="logout" block>Logout</v-btn>
+      </div>
+    </template>
   </v-navigation-drawer>
 
   <v-app-bar
@@ -43,7 +48,12 @@
 </template>
 
 <script>
+    import { removeItem } from 'nuxt-storage/local-storage'
     import {mapState} from 'vuex'
+    import {   userKey } from '@/global'
+    import { getData, setData } from 'nuxt-storage/local-storage';
+
+    import firebase from 'firebase'
     export default {
         name: "menuLateral",
         computed: mapState(['isMenuVisible']),
@@ -51,10 +61,11 @@
             return {
                 clipped: false,
                 drawer: false,
+                title: '',
                 items: [
                     {
                         icon: 'mdi-apps',
-                        title: 'Welcome',
+                        title: 'Usuário',
                         to: '/'
                     },
                     {
@@ -75,8 +86,20 @@
                 this.clipped =  this.$store.state.isMenuVisible
                 console.log(this.drawer)
                 return this.clipped
+            },
+            logout(){
+
+                firebase.auth().signOut().then(() => {
+                    this.$store.commit("addUser",null)
+                    removeItem(userKey)
+                    this.$router.replace('/auth/login')
+                })
+
             }
         }
+       /* created() {
+            this.title = getData(userKey)
+        }*/
     }
 </script>
 
