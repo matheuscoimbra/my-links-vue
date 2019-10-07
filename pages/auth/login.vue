@@ -157,13 +157,12 @@
                     this.user = new firebase.auth.GoogleAuthProvider()
                     firebase.auth().signInWithEmailAndPassword(this.email, this.senha)
                         .then((user)  => {
-                        // store the user ore wathever
-                            console.log("login1",user)
+                       console.log("login user",user)
                         this.$store.commit('addUser', user)
                         setData(userKey, JSON.stringify(this.user))
                             this.error= "login realizado com sucesso!"
                         this.$router.push('/')
-                    }).catch(e => {
+                    }).catch((e) => {
                         this.error= (e.message=="The password is invalid or the user does not have a password.")?"Usuário ou senhas inválidos":"não foi possível realizar logon, tente novamente mais tarde..."
                         this.snackbar = true
                         console.log(e)
@@ -183,10 +182,10 @@
                             firebase.firestore().collection("user").doc(created.user.uid).set({
                                 name: this.nome,
                                 email: this.email,
-                            }).then(()=>{
+                            }).then((res)=>{
                                 console.log("cadastrando",created)
                                 this.$store.commit('addUser', created)
-                                setData(userKey, JSON.stringify(created))
+                                setData(userKey, JSON.stringify(created.user))
                                 this.error= "cadastro realizado com sucesso!"
                                 this.$router.push('/')
                             }).catch((err) => {

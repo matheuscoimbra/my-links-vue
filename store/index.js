@@ -1,6 +1,6 @@
 
 import firebase from 'firebase'
-
+export const strict = false
 export const state = () => ({
   usuario: null,
   isMenuVisible:false,
@@ -11,14 +11,12 @@ export const mutations = {
   addUser (state, usuario) {
     state.usuario = usuario
     if(usuario) {
-      console.log("login",state.usuario.user);
-      var docRef = firebase.firestore().collection("user").doc(state.usuario.user.uid).get();
-      docRef.get().then((res) => {
-        if(res.exists) {
-          state.userProfile = res.data()
-          console.log("res store", state.userProfile)
-          state.isMenuVisible = true
-        }
+      console.log("ok store")
+      console.log(usuario.user)
+      firebase.firestore().collection("user").doc(usuario.user.uid).get().then((res) => {
+        console.log("res store",res)
+       state.userProfile = res.data()
+        state.isMenuVisible = true
       }).catch((err) => {
         console.log("erro ao adc")
       })
