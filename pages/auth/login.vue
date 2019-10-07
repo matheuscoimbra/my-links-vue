@@ -22,7 +22,7 @@
             text
             @click="snackbar = false"
           >
-            Close
+            fechar
           </v-btn>
         </v-snackbar>
           <v-row

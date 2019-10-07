@@ -8,7 +8,19 @@
     fixed
     app
   >
-    <v-list>
+    <v-list >
+      <v-list-item
+        to="/"
+        router
+        exact
+      >
+        <v-list-item-action>
+          <v-icon>mdi-account</v-icon>
+        </v-list-item-action>
+        <v-list-item-content >
+          <v-list-item-title v-text="userProfile===null?'':userProfile.name"  />
+        </v-list-item-content>
+      </v-list-item>
       <v-list-item
         v-for="(item, i) in items"
         :key="i"
@@ -20,7 +32,7 @@
           <v-icon>{{ item.icon }}</v-icon>
         </v-list-item-action>
         <v-list-item-content>
-          <v-list-item-title v-text="item.title" />
+          <v-list-item-title v-text="item.title"  />
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -39,7 +51,7 @@
     <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
 
 
-    <v-toolbar-title v-text="title" />
+    <v-toolbar-title v-text="titleBarra" />
     <v-spacer />
 
 
@@ -56,18 +68,17 @@
     import firebase from 'firebase'
     export default {
         name: "menuLateral",
-        computed: mapState(['isMenuVisible']),
+        computed: mapState(['isMenuVisible','userProfile']),
         data () {
             return {
                 clipped: false,
                 drawer: false,
                 title: '',
+                nome:'',
+                titleBarra:'MyLinks',
+                componentKey:0,
                 items: [
-                    {
-                        icon: 'mdi-apps',
-                        title: 'Usuário',
-                        to: '/'
-                    },
+
                     {
                         icon: 'mdi-chart-bubble',
                         title: 'Inspire',
@@ -96,10 +107,15 @@
                 })
 
             }
+        },
+        watch:{
+            userProfile(newValue, oldValue){
+                console.log(`Updating from ${oldValue} to ${newValue}`);
+                this.componentKey +=1;
+            }
+
         }
-       /* created() {
-            this.title = getData(userKey)
-        }*/
+
     }
 </script>
 

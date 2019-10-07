@@ -14,7 +14,7 @@ export const mutations = {
       console.log("ok store")
       console.log(usuario.user)
       firebase.firestore().collection("user").doc(usuario.user.uid).get().then((res) => {
-        console.log("res store",res)
+        console.log("res store",res.data())
        state.userProfile = res.data()
         state.isMenuVisible = true
       }).catch((err) => {
