@@ -148,7 +148,8 @@ export default {
                 link: this.link,
                 name:this.nome,
                 start: moment(String(new Date())).format('YYYY-MM-DD'),
-                end: moment(String(new Date())).format('YYYY-MM-DD')
+                end: moment(String(new Date())).format('YYYY-MM-DD'),
+                color:'indigo'
                 }
             ).then((res)=>{
                 this.error="link cadastrado com sucesso"
