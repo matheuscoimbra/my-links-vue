@@ -27,6 +27,18 @@
             required
           ></v-text-field>
         </v-col>
+
+        <v-col
+          cols="12"
+          md="2"
+        >
+          <v-text-field
+            v-model="nome"
+            :rules="[v => !!v || 'Informe o nome']"
+            label="Nome"
+            required
+          ></v-text-field>
+        </v-col>
         <v-btn :disabled="!valid" @click="registrar"  class="mx-2" fab dark color="indigo">
           <v-icon dark>mdi-plus</v-icon>
         </v-btn>
@@ -57,6 +69,7 @@
 <script>
     import {mapState} from 'vuex'
     import firebase from 'firebase'
+    import moment from 'moment'
 
 
 export default {
@@ -64,6 +77,7 @@ export default {
     data:()=>({
         valid:false,
         link:'',
+        nome:'',
         error:'',
         snackbar: false,
         usuario:{},
@@ -73,17 +87,27 @@ export default {
         links:[],
         headers:[
             {
-                text: 'Nome do link',
+                text: 'link',
                 align: 'left',
                 sortable: false,
                 value: 'list.link',
+            },
+            {
+                text: 'Nome',
+                align: 'left',
+                sortable: false,
+                value: 'list.nome',
             },
             { text: 'Ações', value: 'action', sortable: false, align: 'center', },
         ]
 
     }),
     methods:{
+       isValidURL(string) {
+        var res = string.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
+        return (res !== null)
 
+       },
         carregar(){
          firebase.firestore().collection("user").
              doc(this.usuario.user.uid).collection("links").get().then((data)=>{
@@ -115,16 +139,23 @@ export default {
         },
         registrar(){
             console.log("link user", this.usuario)
-
+            if(this.isValidURL(this.link)==false){
+                this.error="link inválido"
+                this.snackbar = true
+                return
+            }
             firebase.firestore().collection("user").doc(this.usuario.user.uid).collection("links").add({
                 link: this.link,
-                data: new Date()
+                name:this.nome,
+                start: moment(String(new Date())).format('YYYY-MM-DD'),
+                end: moment(String(new Date())).format('YYYY-MM-DD')
                 }
             ).then((res)=>{
                 this.error="link cadastrado com sucesso"
                 this.snackbar = true
                 this.reset();
                 this.link=''
+                this.nome=''
             }).catch((err) => {
 
                 this.error="erro ao cadastrar link"

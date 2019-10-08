@@ -81,8 +81,8 @@
 
                     {
                         icon: 'mdi-chart-bubble',
-                        title: 'Inspire',
-                        to: '/inspire'
+                        title: 'Calendario',
+                        to: '/calendar'
                     }
                 ],
                 miniVariant: false,
