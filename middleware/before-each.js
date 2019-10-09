@@ -20,10 +20,9 @@ export default async ({
   const isNotLogin = getData(userKey)
   console.log("login", isNotLogin);
 
-  if (isNotLogin===null && currentPath!=='/auth/login' &&  maybeAuthenticated === null ) {
+  if (currentPath!=='/' &&  maybeAuthenticated === null ) {
     console.log("ent")
-    setData(userKey, setData(userKey, JSON.stringify("user")))
-     redirect('/auth/login', { page: route.fullPath })
+     redirect('/', { page: route.fullPath })
 
   }
 }

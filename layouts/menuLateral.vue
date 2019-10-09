@@ -10,7 +10,7 @@
   >
     <v-list >
       <v-list-item
-        to="/"
+        to="/pagina/links"
         router
         exact
       >
@@ -82,7 +82,7 @@
                     {
                         icon: 'mdi-chart-bubble',
                         title: 'Calendario',
-                        to: '/calendar'
+                        to: '/pagina/calendar'
                     }
                 ],
                 miniVariant: false,
@@ -103,7 +103,7 @@
                 firebase.auth().signOut().then(() => {
                     this.$store.commit("addUser",null)
                     removeItem(userKey)
-                    this.$router.replace('/auth/login')
+                    this.$router.replace('/')
                 })
 
             }

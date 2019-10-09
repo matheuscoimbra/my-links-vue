@@ -1,183 +1,205 @@
 <template>
-  <v-form v-model="valid">
-    <v-snackbar
-      v-model="snackbar"
-      color="primary"
-      top="top"
-    >
-      {{ error }}
-      <v-btn
-        color="pink"
-        text
-        @click="snackbar = false"
+
+  <v-app id="inspire">
+    <v-content>
+      <v-container
+
+        fluid
       >
-        fechar
-      </v-btn>
-    </v-snackbar>
-    <v-container>
-      <v-row>
-        <v-col
-          cols="12"
-          md="8"
+      <v-form
+        ref="form"
+        v-model="valid"
+        :lazy-validation="lazy"
+      >
+        <v-snackbar
+          v-model="snackbar"
+          color="primary"
+          top="top"
         >
-          <v-text-field
-            v-model="link"
-            :rules="[v => !!v || 'Informe o link']"
-            label="Link"
-            required
-          ></v-text-field>
-        </v-col>
+          {{ error }}
+          <v-btn
+            color="pink"
+            text
+            @click="snackbar = false"
+          >
+            fechar
+          </v-btn>
+        </v-snackbar>
+          <v-row
+            align="center"
+            justify="center"
+          >
+            <v-col
+              cols="12"
+              sm="8"
+              md="4"
+            >
+              <v-card class="elevation-1">
+                <v-toolbar
+                  color="primary"
+                  dark
+                  flat
+                >
+                  <v-toolbar-title >My Links <v-icon>mdi-dog</v-icon></v-toolbar-title>
+                  <div class="flex-grow-1"></div>
 
-        <v-col
-          cols="12"
-          md="2"
-        >
-          <v-text-field
-            v-model="nome"
-            :rules="[v => !!v || 'Informe o nome']"
-            label="Nome"
-            required
-          ></v-text-field>
-        </v-col>
-        <v-btn :disabled="!valid" @click="registrar"  class="mx-2" fab dark color="indigo">
-          <v-icon dark>mdi-plus</v-icon>
-        </v-btn>
+                </v-toolbar>
+                <v-tabs  fixed-tabs
+                         background-color="indigo"
+                         dark>
+                  <v-tab>Login</v-tab>
 
-      </v-row>
-    </v-container>
-    <v-data-table :loading="load" loading-text="Carrregando..."
-      :headers="headers"
-      :items="links"
-      :items-per-page="page"
-      class="elevation-1"
-    >
+                  <v-tab-item>
+                <v-card-text>
+                    <v-text-field
+                      label="Login"
+                      v-model="email"
+                      :rules="emailRules"
+                      name="login"
+                      required
+                      prepend-icon="mdi-account"
+                    ></v-text-field>
 
-      <template v-slot:item.action="{ item }">
+                    <v-text-field
+                      label="Password"
+                      v-model="senha"
+                      prepend-icon="mdi-key"
+                      :rules="[v => !!v || 'Informe a senha']"
+                      required
+                      type="password"
+                    ></v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                  <div class="flex-grow-1"></div>
+                  <v-btn :disabled="!valid" @click="validate" color="primary">Entrar</v-btn>
+                </v-card-actions>
+                  </v-tab-item>
+                  <v-tab>REGISTRAR</v-tab>
+                  <v-tab-item>
+                    <v-card-text>
 
-        <v-icon
-          big color="indigo"
-          @click="deleteItem(item)"
-        >
-          mdi-delete
-        </v-icon>
-      </template>
-    </v-data-table>
-  </v-form>
+                      <v-text-field
+                        label="Nome Completo"
+                        v-model="nome"
+                        prepend-icon="mdi-account-badge"
+                        :rules="[v => !!v || 'Informe seu nome ']"
+                        required
+                      ></v-text-field>
 
+                      <v-text-field
+                        label="Email"
+                        v-model="email"
+                        :rules="emailRules"
+                        name="login"
+                        required
+                        prepend-icon="mdi-account"
+                      ></v-text-field>
+
+                      <v-text-field
+                        label="Password"
+                        v-model="senha"
+                        prepend-icon="mdi-key"
+                        :rules="[v => !!v || 'Informe a senha']"
+                        required
+                        type="password"
+                      ></v-text-field>
+                    </v-card-text>
+                    <v-card-actions>
+                      <div class="flex-grow-1"></div>
+                      <v-btn :disabled="!valid" @click="registrar" color="primary">Registrar</v-btn>
+                    </v-card-actions>
+                  </v-tab-item>
+                </v-tabs>
+
+              </v-card>
+
+            </v-col>
+
+          </v-row>
+
+      </v-form>
+      </v-container>
+    </v-content>
+  </v-app>
 </template>
 
 <script>
-    import {mapState} from 'vuex'
-    import firebase from 'firebase'
-    import moment from 'moment'
+  import {   userKey } from '@/global'
+    import { getData, setData } from 'nuxt-storage/local-storage';
+  import firebase from 'firebase'
+
+    export default {
+
+        data: () => ({
+            top:true,
+            snackbar: false,
+            error:'',
+            email:'',
+            senha:'',
+            nome:'nome',
+            name: "login",
+            user: {},
+            valid: true,
+            emailRules: [
+                v => !!v || 'informe seu email de autenticação',
+                v => /.+@.+\..+/.test(v) || 'E-mail deve ser válido',
+            ],
+            lazy: false,
+        }),
+        methods: {
+            validate() {
+                if (this.$refs.form.validate()) {
+                    this.error="realizando login..."
+                    this.snackbar = true
+                    this.user.email = this.email
+                    this.user.senha = this.senha
+                    console.log(this.user)
+                    this.user = new firebase.auth.GoogleAuthProvider()
+                    firebase.auth().signInWithEmailAndPassword(this.email, this.senha)
+                        .then((user)  => {
+                       console.log("login user",user)
+                        this.$store.commit('addUser', user)
+                        setData(userKey, JSON.stringify(this.user))
+                            this.error= "login realizado com sucesso!"
+                        this.$router.push('/pagina/links')
+                    }).catch((e) => {
+                        this.error= (e.message=="The password is invalid or the user does not have a password.")?"Usuário ou senhas inválidos":"não foi possível realizar logon, tente novamente mais tarde..."
+                        this.snackbar = true
+                        console.log(e)
+                    })
 
 
-export default {
-
-    data:()=>({
-        valid:false,
-        link:'',
-        nome:'',
-        error:'',
-        snackbar: false,
-        usuario:{},
-        page:10,
-        load:true,
-        objeto:{},
-        links:[],
-        headers:[
-            {
-                text: 'link',
-                align: 'left',
-                sortable: false,
-                value: 'list.link',
-            },
-            {
-                text: 'Nome',
-                align: 'left',
-                sortable: false,
-                value: 'list.nome',
-            },
-            { text: 'Ações', value: 'action', sortable: false, align: 'center', },
-        ]
-
-    }),
-    methods:{
-       isValidURL(string) {
-        var res = string.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
-        return (res !== null)
-
-       },
-        carregar(){
-         firebase.firestore().collection("user").
-             doc(this.usuario.user.uid).collection("links").get().then((data)=>{
-             data.docs.map((doc)=>{
-                  this.objeto.id = doc.id
-                 this.objeto.list = doc.data()
-                 this.links.push(this.objeto)
-                 this.objeto={}
-                 console.log(this.links)
-
-             })
-         })
-        },
-        reset() {
-            this.objeto={}
-            this.links = []
-            this.carregar()
-        },
-        deleteItem(obj){
-          console.log("delete",obj)
-            firebase.firestore().collection("user").doc(this.usuario.user.uid).collection("links").doc(obj.id).delete().then((res)=>{
-                this.error="link deletado com sucesso"
-                this.snackbar = true
-                this.reset();
-            }).catch((err) => {
-                this.error="erro ao deletar link"
-                this.snackbar = true
-            })
-        },
-        registrar(){
-            console.log("link user", this.usuario)
-            if(this.isValidURL(this.link)==false){
-                this.error="link inválido"
-                this.snackbar = true
-                return
-            }
-            firebase.firestore().collection("user").doc(this.usuario.user.uid).collection("links").add({
-                link: this.link,
-                name:this.nome,
-                start: moment(String(new Date())).format('YYYY-MM-DD'),
-                end: moment(String(new Date())).format('YYYY-MM-DD'),
-                color:'indigo'
                 }
-            ).then((res)=>{
-                this.error="link cadastrado com sucesso"
+
+
+            },
+            registrar(){
+                this.error="realizando cadastro..."
                 this.snackbar = true
-                this.reset();
-                this.link=''
-                this.nome=''
-            }).catch((err) => {
-
-                this.error="erro ao cadastrar link"
-                this.snackbar = true
-            })
-
+                firebase.auth().createUserWithEmailAndPassword(this.email, this.senha)
+                    .then((created) => {
+                        created.user.sendEmailVerification().then((user) => {
+                            firebase.firestore().collection("user").doc(created.user.uid).set({
+                                name: this.nome,
+                                email: this.email,
+                            }).then((res)=>{
+                                console.log("cadastrando",created)
+                                this.$store.commit('addUser', created)
+                                setData(userKey, JSON.stringify(created.user))
+                                this.error= "cadastro realizado com sucesso!"
+                                this.$router.push('/pagina/links')
+                            }).catch((err) => {
+                                console.log("erro cadastro fb")
+                                this.error=err.message
+                                this.snackbar = true
+                            })
+                        });
+                    }).catch((error) => {
+                    console.log("erro cadastro")
+                    this.error=error.message
+                    this.snackbar = true
+                });
+            }
         }
-
-    },
-    watch: {
-        page() {
-            this.carregar()
-        }
-    },
-    mounted(){
-        this.usuario = this.$store.state.usuario
-        this.carregar()
-        this.load = false
-    },
-    created() {
-        this.usuario = this.$store.state.usuario
     }
-}
 </script>
