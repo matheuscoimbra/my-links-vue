@@ -82,7 +82,6 @@
                         label="Nome Completo"
                         v-model="nome"
                         prepend-icon="mdi-account-badge"
-                        :rules="[v => !!v || 'Informe seu nome ']"
                         required
                       ></v-text-field>
 
@@ -125,7 +124,7 @@
 
 <script>
   import {   userKey } from '@/global'
-    import { getData, setData } from 'nuxt-storage/local-storage';
+    import { getData, setData,removeItem } from 'nuxt-storage/local-storage';
   import firebase from 'firebase'
 
     export default {
@@ -136,7 +135,7 @@
             error:'',
             email:'',
             senha:'',
-            nome:'nome',
+            nome:'',
             name: "login",
             user: {},
             valid: true,
@@ -153,15 +152,11 @@
                     this.snackbar = true
                     this.user.email = this.email
                     this.user.senha = this.senha
-                    console.log(this.user)
                     this.user = new firebase.auth.GoogleAuthProvider()
                     firebase.auth().signInWithEmailAndPassword(this.email, this.senha)
                         .then((user)  => {
-                       console.log("login user",user)
-                        this.$store.commit('addUser', user)
-                        setData(userKey, JSON.stringify(this.user))
-                            this.error= "login realizado com sucesso!"
-                        this.$router.push('/pagina/links')
+                        this.$store.dispatch('addUser', user)
+                         this.error= "login realizado com sucesso!"
                     }).catch((e) => {
                         this.error= (e.message=="The password is invalid or the user does not have a password.")?"Usuário ou senhas inválidos":"não foi possível realizar logon, tente novamente mais tarde..."
                         this.snackbar = true
@@ -184,10 +179,9 @@
                                 email: this.email,
                             }).then((res)=>{
                                 console.log("cadastrando",created)
-                                this.$store.commit('addUser', created)
-                                setData(userKey, JSON.stringify(created.user))
+                                this.$store.dispatch('addUser', created)
                                 this.error= "cadastro realizado com sucesso!"
-                                this.$router.push('/pagina/links')
+
                             }).catch((err) => {
                                 console.log("erro cadastro fb")
                                 this.error=err.message
@@ -200,6 +194,10 @@
                     this.snackbar = true
                 });
             }
+        },
+        created() {
+            this.$store.state.usuario=null
+            removeItem(userKey)
         }
     }
 </script>

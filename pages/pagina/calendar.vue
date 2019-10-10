@@ -99,7 +99,8 @@
 <script>
     import firebase from 'firebase'
     import moment from 'moment'
-
+    import { getData, setData } from 'nuxt-storage/local-storage';
+    import {   userKey } from '@/global'
     export default {
         data: () => ({
             today: moment(String(new Date())).format('YYYY-MM-DD'),
@@ -123,7 +124,7 @@
         methods:{
             carregar(){
                 firebase.firestore().collection("user").
-                doc(this.usuario.user.uid).collection("links").get().then((data)=>{
+                doc(this.usuario.uid).collection("links").get().then((data)=>{
                     data.docs.map((doc)=>{
                         this.eventos.push( doc.data())
                         console.log(this.aventos)
@@ -212,7 +213,7 @@
         },
         mounted() {
             this.$refs.calendar.checkChange()
-            this.usuario = this.$store.state.usuario
+            this.usuario = getData(userKey)
             this.carregar()
         }
 

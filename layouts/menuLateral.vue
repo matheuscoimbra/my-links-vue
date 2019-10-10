@@ -75,6 +75,7 @@
                 drawer: false,
                 title: '',
                 nome:'',
+                usuario:'',
                 titleBarra:'MyLinks',
                 componentKey:0,
                 items: [
@@ -106,6 +107,13 @@
                     this.$router.replace('/')
                 })
 
+            }
+        },
+        mounted(){
+            this.usuario = getData(userKey)
+            if(this.usuario!==null){
+                this.$store.state.usuario = this.usuario
+                this.$store.state.userProfile = this.usuario
             }
         },
         watch:{

@@ -14,14 +14,13 @@ export default async ({
   if (process.static) { return }
   const maybeReq = process.server ? req : null
   let maybeAuthenticated = await  store.getters.usuarioget
-  console.log("maybe",maybeAuthenticated);
   const currentPath = route.path
-  console.log("PAGE", currentPath)
-  const isNotLogin = getData(userKey)
+
+  var isNotLogin =await getData(userKey)
   console.log("login", isNotLogin);
 
-  if (currentPath!=='/' &&  maybeAuthenticated === null ) {
-    console.log("ent")
+  if (isNotLogin && currentPath!=='/' &&  maybeAuthenticated === null ) {
+    console.log("storage",getData(userKey))
      redirect('/', { page: route.fullPath })
 
   }

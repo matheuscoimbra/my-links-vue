@@ -70,7 +70,8 @@
     import {mapState} from 'vuex'
     import firebase from 'firebase'
     import moment from 'moment'
-
+    import { getData, setData } from 'nuxt-storage/local-storage';
+    import {   userKey } from '@/global'
 
 export default {
 
@@ -110,7 +111,7 @@ export default {
        },
         carregar(){
          firebase.firestore().collection("user").
-             doc(this.usuario.user.uid).collection("links").get().then((data)=>{
+             doc(this.usuario.uid).collection("links").get().then((data)=>{
              data.docs.map((doc)=>{
                   this.objeto.id = doc.id
                  this.objeto.list = doc.data()
@@ -128,7 +129,7 @@ export default {
         },
         deleteItem(obj){
           console.log("delete",obj)
-            firebase.firestore().collection("user").doc(this.usuario.user.uid).collection("links").doc(obj.id).delete().then((res)=>{
+            firebase.firestore().collection("user").doc(this.usuario.uid).collection("links").doc(obj.id).delete().then((res)=>{
                 this.error="link deletado com sucesso"
                 this.snackbar = true
                 this.reset();
@@ -144,7 +145,7 @@ export default {
                 this.snackbar = true
                 return
             }
-            firebase.firestore().collection("user").doc(this.usuario.user.uid).collection("links").add({
+            firebase.firestore().collection("user").doc(this.usuario.uid).collection("links").add({
                 link: this.link,
                 name:this.nome,
                 start: moment(String(new Date())).format('YYYY-MM-DD'),
@@ -171,15 +172,19 @@ export default {
             this.carregar()
         }
     },
-    mounted(){
-        this.usuario = this.$store.state.usuario
+    mounted() {
+        console.log(" mounted")
         this.carregar()
         this.load = false
     },
-    created() {
+   beforeMount() {
+       console.log("before mounted")
+       this.usuario = getData(userKey)
+       console.log("mounted user",this.usuario)
+       if(this.usuario!==null){
+           this.$store.state.usuario = this.usuario
+       }
+   }
 
-        console.log("sem usuario c2")
-
-    }
 }
 </script>
