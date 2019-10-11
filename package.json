@@ -19,6 +19,7 @@
     "nuxt-storage": "^1.2.2"
   },
   "devDependencies": {
-    "@nuxtjs/vuetify": "^1.0.0"
+    "@nuxtjs/vuetify": "^1.0.0",
+    "vue-linkify": "^1.0.1"
   }
 }

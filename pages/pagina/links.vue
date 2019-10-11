@@ -51,7 +51,9 @@
       :items-per-page="page"
       class="elevation-1"
     >
-
+      <template v-slot:item.list.link="{ item }">
+        <v-chip  color="indigo" dark> <div  v-html="linkR(item.list.link )" v-linkified /></v-chip>
+      </template>
       <template v-slot:item.action="{ item }">
 
         <v-icon
@@ -70,9 +72,12 @@
     import {mapState} from 'vuex'
     import firebase from 'firebase'
     import moment from 'moment'
+    import linkify from 'vue-linkify'
+    import Vue from 'vue'
     import { getData, setData } from 'nuxt-storage/local-storage';
     import {   userKey } from '@/global'
 
+    Vue.directive('linkified', linkify)
 export default {
 
     data:()=>({
@@ -97,7 +102,7 @@ export default {
                 text: 'Nome',
                 align: 'left',
                 sortable: false,
-                value: 'list.nome',
+                value: 'list.name',
             },
             { text: 'Ações', value: 'action', sortable: false, align: 'center', },
         ]
@@ -109,6 +114,12 @@ export default {
         return (res !== null)
 
        },
+        toLink(str){
+            return str.link(str)
+        },
+        linkR(str){
+            return str
+        },
         carregar(){
          firebase.firestore().collection("user").
              doc(this.usuario.uid).collection("links").get().then((data)=>{
@@ -174,17 +185,20 @@ export default {
     },
     mounted() {
         console.log(" mounted")
+        this.usuario = getData(userKey)
+        console.log("mounted user",this.usuario)
+        if(this.usuario!==null){
+            this.$store.state.usuario = this.usuario
+        }
         this.carregar()
         this.load = false
-    },
-   beforeMount() {
-       console.log("before mounted")
-       this.usuario = getData(userKey)
-       console.log("mounted user",this.usuario)
-       if(this.usuario!==null){
-           this.$store.state.usuario = this.usuario
-       }
-   }
+    }
 
 }
 </script>
+
+<style>
+  .v-application a{
+    color: white !important;
+  }
+</style>
